@@ -22,7 +22,7 @@ export default function decorate(block) {
     try {
       const response = await fetch('/query-index.json');
       const data = await response.json();
-      
+
       const results = data.data.filter((item) => {
         const searchText = query.toLowerCase();
         return (
