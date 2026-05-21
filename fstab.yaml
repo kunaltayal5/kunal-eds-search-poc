@@ -1,5 +1,4 @@
 mountpoints:
   /:
-    url: "https://author-p133739-e1306963.adobeaemcloud.com/bin/franklin.delivery/bhavi-genpactexperience/eds-search-poc/main"
-    type: "markup"
-    suffix: ".html"
+    url: https://da.live/source/kunaltayal5/kunal-eds-search-poc
+    type: markup
