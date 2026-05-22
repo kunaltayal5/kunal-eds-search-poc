@@ -1,3 +1,38 @@
+const SEARCH_FIELDS = [
+  'title',
+  'description',
+  'keywords',
+  'author',
+  'publishedDate',
+  'category',
+  'tags',
+  'content',
+];
+
+function getSearchValue(item, field) {
+  const value = item[field];
+
+  if (Array.isArray(value)) {
+    return value.join(' ');
+  }
+
+  return value || '';
+}
+
+function escapeHTML(value = '') {
+  const div = document.createElement('div');
+  div.textContent = value;
+  return div.innerHTML;
+}
+
+function matchesQuery(item, query) {
+  const searchText = query.toLowerCase();
+
+  return SEARCH_FIELDS.some((field) => (
+    getSearchValue(item, field).toString().toLowerCase().includes(searchText)
+  ));
+}
+
 export default function decorate(block) {
   block.innerHTML = `
     <div class="search-input-wrapper">
@@ -23,13 +58,7 @@ export default function decorate(block) {
       const response = await fetch('/query-index.json');
       const data = await response.json();
 
-      const results = data.data.filter((item) => {
-        const searchText = query.toLowerCase();
-        return (
-          item.title?.toLowerCase().includes(searchText)
-          || item.description?.toLowerCase().includes(searchText)
-        );
-      });
+      const results = data.data.filter((item) => matchesQuery(item, query));
 
       if (results.length === 0) {
         resultsContainer.innerHTML = '<p>No results found.</p>';
@@ -38,8 +67,8 @@ export default function decorate(block) {
 
       resultsContainer.innerHTML = results.map((item) => `
         <div class="search-result-item">
-          <h3><a href="${item.path}">${item.title}</a></h3>
-          <p>${item.description || ''}</p>
+          <h3><a href="${item.path}">${escapeHTML(item.title || item.path)}</a></h3>
+          <p>${escapeHTML(item.description || '')}</p>
         </div>
       `).join('');
     } catch {
